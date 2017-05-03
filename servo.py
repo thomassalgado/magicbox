@@ -4,18 +4,22 @@ import redis
 import json
 from Tkinter import *
 
+#open conection with redis
 r = redis.StrictRedis(host='<redis_ip>', port=<redis_port>, db=0)
 
 try:
         while True:
+                #getting message from redis
                 strJson = r.lpop("fichas_liberar")
                 if(strJson == None):
                         print "Fila Vazia"
                 else:
+                        #decode json
                         user = json.loads(strJson)
                         name = user["name"]
                         id = user["id"]
-
+                        
+                        #moving servo motor / pins from raspberry pi 1
                         GPIO.setmode(GPIO.BOARD)
                         GPIO.setup(7, GPIO.OUT)
                         p = GPIO.PWM(7,50)
@@ -25,6 +29,7 @@ try:
                         time.sleep(0.5)
                         GPIO.cleanup()
 
+                        #show message
                         root = Tk()
                         root.wm_title("Venha buscar sua ficha")
                         text = Text(font=("Helvetica",100))
